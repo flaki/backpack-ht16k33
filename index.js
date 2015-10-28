@@ -65,9 +65,11 @@ Backpack.prototype.clear = function(callback) {
 Backpack.prototype.writeBitmap = function(bitmap, callback) {
   var self = this;
 
-  bitmap.forEach(function(row, index) {
-    row.unshift(row.pop());
-    var rowValue = parseInt(row.join(""), 2);
+  bitmap.forEach(function(r, index) {
+    // Basic fix for behavior causing side effects in bitmap
+    // TODO: properly refactor this into a numeric function,
+    // add external mirroring fix here as well
+    var rowValue = parseInt("".concat(r[7],r[0],r[1],r[2],r[3],r[4],r[5],r[6]), 2);
     self.i2c.send(new Buffer([index*2 & 0xFF, rowValue]), self._errorCallback);
   });
 }
